@@ -5,7 +5,7 @@ const s3 = new aws.S3();
 const WEBHOOK_SECRET = '**REDACTED**';
 const UPTIME_SECRET_URL = '**REDACTED**';
 
-const LOC_API_URL = 'https://api.integration.covid19.health.nz/locations' +
+const LOI_API_URL = 'https://api.integration.covid19.health.nz/locations' +
     '/v1/current-locations-of-interest';
 const WEBHOOK_URL = 'https://discord.com/api/webhooks/' + WEBHOOK_SECRET;
 const BUCKET_NAME = 'printfn-data-unversioned';
@@ -15,7 +15,7 @@ exports.handler = async (event) => {
     aws.config.update({ region: "ap-southeast-2" });
 
     const [locationsString, knownLocs] = await Promise.all([
-        postJSON(LOC_API_URL, {}, 'GET'),
+        postJSON(LOI_API_URL, {}, 'GET'),
         readFromS3()
     ]);
     const locations = JSON.parse(locationsString).items;
@@ -31,27 +31,27 @@ exports.handler = async (event) => {
             continue;
         }
         if (knownLocs[loc.eventId]) {
-            // we've seen this LOC before, but we need to check if it's been updated
+            // we've seen this LOI before, but we need to check if it's been updated
             if (!loc.updatedAt) continue;
             const lastSeenDate = Date.parse(knownLocs[loc.eventId]);
             const updatedDate = Date.parse(loc.updatedAt);
             if (!lastSeenDate || !updatedDate) continue;
             if (updatedDate > lastSeenDate) {
-                // the LOC has been updated since we last saw it
-                announcements.push(stringifyLOC(true, loc));
+                // the LOI has been updated since we last saw it
+                announcements.push(stringifyLOI(true, loc));
                 continue;
             }
             continue;
         }
-        announcements.push(stringifyLOC(false, loc));
+        announcements.push(stringifyLOI(false, loc));
     }
-    console.log(`announcing ${announcements.length} locs:`);
+    console.log(`announcing ${announcements.length} LOIs:`);
     console.log(announcements);
     await Promise.all([
         writeToS3(newKnownLocs),
         pushToDiscord(announcements),
     ]);
-    console.log(`Finished successfully. Found ${locations.length} total locs.`);
+    console.log(`Finished successfully. Found ${locations.length} total LOIs.`);
     console.log('uptime ping:', await postJSON(UPTIME_SECRET_URL, {}));
     const response = {
         statusCode: 200,
@@ -108,7 +108,7 @@ const formatDate = dateStr => {
     });
 };
 
-const stringifyLOC = (updated, loc) => {
+const stringifyLOI = (updated, loc) => {
     const startDateStr = formatDate(loc.startDateTime);
     const endDateStr = formatDate(loc.endDateTime);
     let header = '';
