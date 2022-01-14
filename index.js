@@ -109,8 +109,16 @@ const formatDate = dateStr => {
 const stringifyLOC = (updated, loc) => {
     const startDateStr = formatDate(loc.startDateTime);
     const endDateStr = formatDate(loc.endDateTime);
-    const header = updated ? 'UPDATED LOCATION:' : 'NEW LOCATION:';
-    return `:rotating_light: **${header}**\n` +
+    let header = '';
+    if (loc.exposureType == 'Close') {
+        header = updated ? 'UPDATED HIGH-RISK LOCATION:' : 'NEW HIGH-RISK LOCATION:';
+        header = `:rotating_light::rotating_light::rotating_light: **${header}**`;
+        header += ' :rotating_light::rotating_light::rotating_light:';
+    } else {
+        header = updated ? 'UPDATED LOCATION:' : 'NEW LOCATION:';
+        header = `:rotating_light: **${header}**`;
+    }
+    return `${header}\n` +
         `:question: ${loc.eventName}\n` +
         `:round_pushpin: ${loc.location.address}\n` +
         `:calendar_spiral: Start: **${startDateStr}**\n` +
