@@ -3,6 +3,7 @@ const aws = require('aws-sdk');
 const s3 = new aws.S3();
 
 const WEBHOOK_SECRET = '**REDACTED**';
+const UPTIME_SECRET_URL = '**REDACTED**';
 
 const LOC_API_URL = 'https://api.integration.covid19.health.nz/locations' +
     '/v1/current-locations-of-interest';
@@ -51,6 +52,7 @@ exports.handler = async (event) => {
         pushToDiscord(announcements),
     ]);
     console.log(`Finished successfully. Found ${locations.length} total locs.`);
+    console.log('uptime ping:', await postJSON(UPTIME_SECRET_URL, {}));
     const response = {
         statusCode: 200,
         body: JSON.stringify(`OK`),
