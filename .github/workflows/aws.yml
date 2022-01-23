@@ -1,0 +1,32 @@
+name: Deploy to Amazon Lambda
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: us-east-1
+  FUNCTION_NAME: wellingtonloilambda
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      id-token: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: arn:aws:iam::762452562910:role/LambdaDeploy
+        aws-region: ${{ env.AWS_REGION }}
+    - name: Deploy lambda function
+      run: |
+        zip function.zip index.js
+        aws lambda update-function-code --function-name wellingtonloilambda --zip-file fileb://function.zip
