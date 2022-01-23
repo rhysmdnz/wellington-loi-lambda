@@ -6,8 +6,9 @@ on:
       - main
 
 env:
-  AWS_REGION: us-east-1
-  FUNCTION_NAME: wellingtonloilambda
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  FUNCTION_NAME: ${{ secrets.FUNCTION_NAME }}
+  AWS_ROLE: ${{ secrets.AWS_ROLE }}
 
 jobs:
   deploy:
@@ -25,9 +26,9 @@ jobs:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        role-to-assume: arn:aws:iam::762452562910:role/LambdaDeploy
+        role-to-assume: ${{ env.AWS_ROLE }} 
         aws-region: ${{ env.AWS_REGION }}
     - name: Deploy lambda function
       run: |
         zip function.zip index.js
-        aws lambda update-function-code --function-name wellingtonloilambda --zip-file fileb://function.zip
+        aws lambda update-function-code --function-name ${{ env.FUNCTION_NAME }} --zip-file fileb://function.zip
