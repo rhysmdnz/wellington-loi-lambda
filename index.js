@@ -2,12 +2,11 @@ const https = require('https');
 const aws = require('aws-sdk');
 const s3 = new aws.S3();
 
-const WEBHOOK_SECRET = '**REDACTED**';
-const UPTIME_SECRET_URL = '**REDACTED**';
+const WEBHOOK_URL = process.env.WEBHOOK_URL;
+const UPTIME_SECRET_URL = process.env.UPTIME_SECRET_URL;
 
 const LOI_API_URL = 'https://api.integration.covid19.health.nz/locations' +
     '/v1/current-locations-of-interest';
-const WEBHOOK_URL = 'https://discord.com/api/webhooks/' + WEBHOOK_SECRET;
 const BUCKET_NAME = 'printfn-data-unversioned';
 const FILE_NAME = 'locs.json';
 
@@ -52,7 +51,7 @@ exports.handler = async (event) => {
         pushToDiscord(announcements),
     ]);
     console.log(`Finished successfully. Found ${locations.length} total LOIs.`);
-    console.log('uptime ping:', await postJSON(UPTIME_SECRET_URL, {}));
+//    console.log('uptime ping:', await postJSON(UPTIME_SECRET_URL, {}));
     const response = {
         statusCode: 200,
         body: JSON.stringify(`OK`),
