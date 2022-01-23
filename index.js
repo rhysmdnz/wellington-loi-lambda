@@ -51,7 +51,9 @@ exports.handler = async (event) => {
         pushToDiscord(announcements),
     ]);
     console.log(`Finished successfully. Found ${locations.length} total LOIs.`);
-//    console.log('uptime ping:', await postJSON(UPTIME_SECRET_URL, {}));
+    if(UPTIME_SECRET_URL){
+      console.log('uptime ping:', await postJSON(UPTIME_SECRET_URL, {}));
+    }
     const response = {
         statusCode: 200,
         body: JSON.stringify(`OK`),
