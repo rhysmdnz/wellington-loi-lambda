@@ -4,10 +4,10 @@ const s3 = new aws.S3();
 
 const WEBHOOK_URL = process.env.WEBHOOK_URL;
 const UPTIME_SECRET_URL = process.env.UPTIME_SECRET_URL;
+const BUCKET_NAME = process.env.BUCKET_NAME;
 
 const LOI_API_URL = 'https://api.integration.covid19.health.nz/locations' +
     '/v1/current-locations-of-interest';
-const BUCKET_NAME = 'printfn-data-unversioned';
 const FILE_NAME = 'locs.json';
 
 exports.handler = async (event) => {
